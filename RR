@@ -1,51 +1,83 @@
 #!/usr/bin/python
 
-div1 = ["Cubs", "Kittens", "Puppies", "Calfs"]
-div2 = ["Piranhas", "Alligators", "Whales", "Sharks", ]
-div3 = ["Lions", "Tigers", "Jaguars", "Cougars"]
 
-def create_schedule(list):
-  
-    s = []
+numberOfProcesses = 5
+listOfProcesses = ["p0","p1","p2","p3","p4"]
+ArrivalTimes = [0,1,3,1,0]
+ExecutionTimes = [5,3,10,6,8]
 
-    if len(list) % 2 == 1: list = list + ["BYE"]
+clock = 0
 
-    for i in range(len(list)-1):
+processPerClock = []
 
-        mid = len(list) / 2
-        l1 = list[:mid]
-        l2 = list[mid:]
-        l2.reverse()	
+#quantom = input("plz input quantom: ")
 
-       
-        if(i % 2 == 1):
-            s = s + [ zip(l1, l2) ]
-        else:
-            s = s + [ zip(l2, l1) ]
-
-        list.insert(1, list.pop())
-
-    return s
+quantom = 2
 
 
-def main():
-    for round in create_schedule(div1):
-        for match in round:
-            print match[0] + " - " + match[1]
-    print
-    for round in create_schedule(div2):
-        for match in round:
-            print match[0] + " - " + match[1]
-    print
-    for round in create_schedule(div3): 
-        for match in round:
-            print match[0] + " - " + match[1]
-    print
-    for round in create_schedule(div1+div2+div3): 
-        for match in round:
-            print match[0] + " - " + match[1]
-        print
+
+AE = zip(ArrivalTimes,ExecutionTimes)
+AE.sort()
+
+ArrivalTimes_sorted = [ArrivalTimes for ArrivalTimes, ExecutionTimes in AE]
+
+ExecutionTimes_sorted = [ExecutionTimes for ArrivalTimes, ExecutionTimes in AE]
 
 
-if __name__ == "__main__":
-    main()
+
+Al = zip(copyOfArrivalTimes,listOfProcesses)
+Al.sort()
+listOfProcesses_sorted = [listOfProcesses for copyOfArrivalTimes, listOfProcesses in Al]
+
+
+while len(listOfProcesses_sorted) != 0:
+
+	flag = False
+
+	
+	for i in range(len(AE)):
+		
+		for j in range(quantom):
+			if ExecutionTimes_sorted[i] > 0:
+
+				ExecutionTimes_sorted[i] = ExecutionTimes_sorted[i] - 1
+				processPerClock.append(listOfProcesses_sorted[i])
+
+			else:
+				newTmp = i
+				flag = True
+				break
+
+	if flag == True:
+		del ExecutionTimes_sorted[newTmp]
+		del AE[newTmp]
+		del listOfProcesses_sorted[newTmp]
+		del ArrivalTimes_sorted[newTmp]
+
+print "processPerClock: ", processPerClock
+
+
+turnAroundTimes = []
+
+for i in range(len(copyOfArrivalTimes2)):
+	turnAroundTimes.append((len(processPerClock) - processPerClock[::-1].index("p" + str(i)) - 1) - copyOfArrivalTimes2[i])
+
+averageTurnAroundTime = float(sum(turnAroundTimes))/len(copyOfArrivalTimes2)
+
+print "average turnAround time: ", averageTurnAroundTime
+
+waitingtimes = []
+for i in range(len(copyOfListOfProcesses2)):
+	waitingtimes.append(turnAroundTimes[i] - copyOfExecutionTimes[i])
+
+averageWaitingsTime = float(sum(waitingtimes))/len(copyOfArrivalTimes2)
+
+print "average waiting time: ", averageWaitingsTime
+
+responseTimes = []
+for i in range(len(copyOfArrivalTimes2)):
+	responseTimes.append(waitingtimes[i]-copyOfArrivalTimes2[i])
+
+averageResponseTime = float(sum(responseTimes))/len(copyOfArrivalTimes2)
+
+print "average response time: ", averageResponseTime
